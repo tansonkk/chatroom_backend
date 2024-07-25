@@ -1,0 +1,58 @@
+###
+GET  http://localhost:3000
+
+###
+POST http://localhost:13000/
+Content-Type: application/json
+
+{
+"name" : "james",
+"location" : "Hong Kong"
+}
+
+###
+GET http://localhost:13000/setup
+
+###
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "email" : "999@gmail.com",
+    "password" : "19940930"
+}
+
+###
+POST http://localhost:3000/addMessage
+Content-Type: application/json
+
+{
+    "sendId" : 1,
+    "receiverId" : 3,
+    "content" : "hello world"
+}
+
+###
+GET  http://localhost:3000/chatList
+Content-Type: application/json
+
+{
+    "userId" : 1
+}
+
+###
+POST  http://localhost:3000/opt
+Content-Type: application/json
+
+{
+    "email" : "tansonkk@gmail.com"
+}
+
+###
+POST  http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email" : "tansonkk@gmail.com",
+    "password": "19940930"
+}

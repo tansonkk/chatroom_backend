@@ -1,0 +1,57 @@
+Table
+user
+----
+id pk
+email VARCHAR(100) unique
+password VARCHAR(100)
+
+
+message
+-----
+id pk
+sender id fk - user.id
+receiver id fk - user.id
+content VARCHAR(255) 
+date timestamp DEFAULT NOW()
+
+opt
+-----
+id pk
+email VARCHAR(100) 
+opt VARCHAR(4)
+otpexpier timestamp
+
+command 
+CREATE TABLE "user" (
+"id" SERIAL PRIMARY KEY,
+"email" varchar(100) UNIQUE,
+"password" varchar(100)
+);
+
+CREATE TABLE "message" (
+"id" SERIAL PRIMARY KEY,
+"sender_id" integer REFERENCES "users"(id),
+"receiver_id" integer REFERENCES "users"(id),
+"content" varchar(255),
+"date" timestamp DEFAULT NOW()
+);
+
+CREATE TABLE "opt" (
+"id" SERIAL PRIMARY KEY,
+"email" varchar(100),
+"opt" varchar(4),
+"otpexpier" timestamp
+);
+
+
+
+CREATE or REPLACE FUNCTION messageadd() RETURNS trigger AS $$
+DECLARE
+  BEGIN
+    PERFORM pg_notify(CAST('updated' AS text), row_to_json(NEW)::text);
+    RETURN new;
+    END;
+    $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER messageaddtrigger AFTER INSERT ON message
+FOR EACH ROW EXECUTE PROCEDURE messageadd();
