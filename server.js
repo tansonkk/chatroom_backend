@@ -148,7 +148,6 @@ app.post("/addMessage", async (req, res) => {
             const data = JSON.parse(msg.payload);
             console.log("Sender ID:", data["sender_id"]);
             if (data["sender_id"] == sendId || data["receiver_id"] == sendId) {
-              console.log(msg.payload);
               client.send(msg.payload);
             }
           });
