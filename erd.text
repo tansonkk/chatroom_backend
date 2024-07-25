@@ -43,15 +43,3 @@ CREATE TABLE "opt" (
 "otpexpier" timestamp
 );
 
-
-
-CREATE or REPLACE FUNCTION messageadd() RETURNS trigger AS $$
-DECLARE
-  BEGIN
-    PERFORM pg_notify(CAST('updated' AS text), row_to_json(NEW)::text);
-    RETURN new;
-    END;
-    $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER messageaddtrigger AFTER INSERT ON message
-FOR EACH ROW EXECUTE PROCEDURE messageadd();
