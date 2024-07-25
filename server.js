@@ -25,7 +25,8 @@ app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
     "https://codetest-50146-fc1f6.web.app/",
-    "http://localhost:64080"
+
+    "http://localhost:60929"
   );
   next();
 });
@@ -138,26 +139,22 @@ app.post("/addMessage", async (req, res) => {
       [sendId, receiverId, content]
     );
     res.status(200).send({ message: "Successfully added child" });
-
-    client.connect((err, client, done) => {
-      if (err) {
-        console.log("server error", err);
-      } else {
-        client.on("notification", (msg) => {
-          wss.clients.forEach((client) => {
-            const data = JSON.parse(msg.payload);
-            console.log("Sender ID:", data["sender_id"]);
-            if (data["sender_id"] == sendId || data["receiver_id"] == sendId) {
-              client.send(msg.payload);
-            }
-          });
-        });
-
-        const query = client.query("LISTEN updated");
-      }
-    });
   } catch (e) {
     res.status(500).send({ error: e.message });
+  }
+});
+
+client.connect((err, client, done) => {
+  if (err) {
+    console.log("server error", err);
+  } else {
+    client.on("notification", (msg) => {
+      wss.clients.forEach((client) => {
+        client.send(msg.payload);
+      });
+    });
+
+    const query = client.query("LISTEN updated");
   }
 });
 
