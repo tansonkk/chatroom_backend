@@ -1,25 +1,69 @@
 Table
-user
-----
-id pk
-email VARCHAR(100) unique
-password VARCHAR(100)
+
+modify(table) || order > tableState and  orderitemstatus and orderitem
+change || merge table > tableState change id > orderitem.table_id 
+checkout > tableState(open > false)  and invoice and invoiceItems
+get current table detail  > join table
 
 
-message
------
-id pk
-sender id fk - user.id
-receiver id fk - user.id
-content VARCHAR(255) 
-date timestamp DEFAULT NOW()
 
-opt
------
+tablestate
+---
 id pk
-email VARCHAR(100) 
-opt VARCHAR(4)
-otpexpier timestamp
+price integer
+date timestamp
+open bool
+
+invoice
+---
+id pk
+table_id fk - tablestate.id
+cash integer
+price integer
+change integer
+payment VARCHAR(100)
+created_at timestamp DEFAULT NOW()
+
+
+invoiceitem
+-----------
+id pk
+invoice_id fk - invoice.id
+name VARCHAR(100)
+price integer
+quantity integer
+remark VARCHAR(100)
+
+
+orderItems
+---
+id pk
+table_id fk - tablestate.id
+order_id fk - itemstatus.id
+name VARCHAR(100)
+price integer
+quantity integer
+remark VARCHAR(100)
+mixedFlavors1 bool
+mixedFlavors2 bool
+mixedFlavors3 bool
+mixedFlavors4 bool
+moreIce bool
+lessIce bool
+noIce bool 
+moreMilk bool
+lessMilk bool
+noMilk bool
+moreSweet bool
+lessSweet bool
+noSweet bool
+
+orderitemstatus
+---
+id pk fk - orderItems.id
+tabld_id fk - tablestatus.id
+status VARCHAR(100)  (orderd, paid, canceled)
+
 
 command 
 CREATE TABLE "user" (
@@ -41,5 +85,87 @@ CREATE TABLE "opt" (
 "email" varchar(100),
 "opt" varchar(4),
 "otpexpier" timestamp
+);
+
+
+takeAwayInvoice
+---
+id pk
+takeAwayId
+cash integer
+price integer
+change integer
+payment VARCHAR(100)
+created_at timestamp DEFAULT NOW()
+
+
+takeAwayItem
+-----------
+id pk
+takeAwayInvoice_id fk - takeAwayInvoice.id
+name VARCHAR(100)
+price integer
+quantity integer
+remark VARCHAR(100
+
+
+
+commond 
+
+CREATE TABLE tablestate (
+id serial PRIMARY KEY,
+price INT,
+date TIMESTAMP,
+open BOOL
+);
+CREATE TABLE orderItems (
+id SERIAL PRIMARY KEY,
+table_id integer REFERENCES tablestate(id),
+name VARCHAR(100),
+price integer,
+quantity integer,
+remark VARCHAR(100),
+mixedFlavors1 boolean,
+mixedFlavors2 boolean,
+mixedFlavors3 boolean,
+mixedFlavors4 boolean,
+moreIce boolean,
+lessIce boolean,
+noIce boolean,
+moreMilk boolean,
+lessMilk boolean,
+noMilk boolean,
+moreSweet boolean,
+lessSweet boolean,
+noSweet boolean
+);
+
+CREATE TABLE orderitemstatus (
+id SERIAL PRIMARY KEY,
+orderitemid integer REFERENCES orderItems(id),
+status VARCHAR(100)
+);
+
+CREATE TABLE invoice (
+id INT PRIMARY KEY,
+table_id INT,
+FOREIGN KEY(table_id) REFERENCES tablestate(id),
+cash INT,
+price INT,
+change INT,
+payment VARCHAR(100),
+created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+CREATE TABLE orderitemstatus (
+id INT PRIMARY KEY,
+FOREIGN KEY(id) REFERENCES orderItems(id),
+table_id INT,
+FOREIGN KEY(table_id) REFERENCES tablestate(id),
+status VARCHAR(100),
+created_at TIMESTAMP,
+invoice_id INT,
+FOREIGN KEY(invoice_id) REFERENCES invoice(id)
 );
 
